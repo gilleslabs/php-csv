@@ -170,8 +170,10 @@
                 {
                     if($row_data[5] != "")
                         $protocol .= $row_data[5]."\n";
+                    
                     if($row_data[7] != "")
-                        $port     .= $row_data[7]."\n";
+                        $port .= $row_data[7]."\n";
+                    
                 }
                 
                 
@@ -230,12 +232,16 @@
                 continue;
             
             if($policy["SOURCE"] == "")
-                $policy["SOURCE"] = "any";
+                $policy["SOURCE"] = '"any"';
             
             if($policy["DESTINATION"] == "")
-                $policy["DESTINATION"] = "any";
+                $policy["DESTINATION"] = '"any"';
+			if($policy["PROTOCOL"] == "")
+                $policy["PROTOCOL"] = '"any"';
+			if($policy["PORT"] == "")
+                $policy["PORT"] = '"any"';
             
-            $tmp = array_unique(explode(' ', $policy["PROTOCOL"]));
+            $tmp = array_unique(explode('"', $policy["PROTOCOL"]));
             foreach ($tmp as $proto)
                 $policy["PROTOCOL"] .= $proto."\n";
             
