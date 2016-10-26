@@ -171,9 +171,27 @@
                 
                 if($isServices)
                 {
-                    if($row_data[5] != "")
-                        $protocol .= $row_data[5]."\n";
-                    
+                    //if($row_data[5] != "")
+                        //$protocol .= $row_data[5]."\n";
+					
+					$proto ="";
+					
+					if ($row_data[5] != "" && $row_data[5] == '6')
+						$proto = "TCP";
+					
+					if ($row_data[5] != "" && $row_data[5] == '17')
+						$proto = "UDP";
+					if ($row_data[5] != "" && $row_data[5] == '1')
+						$proto = "ICMP";
+					
+					if ($proto == "")
+					$protocol .= $row_data[5]."\n";
+					else
+					$protocol .= $proto."\n";
+					
+					
+                    if($row_data[5] != "" && $row_data[7] == "")
+                        $port .= "ANY\n";
                     if($row_data[7] != "")
                         $port .= $row_data[7]."\n";
                     
@@ -192,7 +210,14 @@
                     $destination = '"';
                 }
             
-			
+			if($row_data[0] == "service/protocol-attribute" && !$isSrc_attributes)
+                {
+                    $isServices = true;
+                    $isSrc_attributes = false;
+                    $source = substr($source, 0, -1);
+                    $policy["SOURCE"] = '"ANY"';
+                    $source = '"';
+                }
 			  if($row_data[0] == "service/protocol-attribute" && $isSrc_attributes)
                 {
                     $isServices = true;
@@ -201,7 +226,14 @@
                     $policy["SOURCE"] = $source.'"';
                     $source = '"';
                 }
-            
+            if($row_data[0] == "service/protocol-attribute" && !$isDst_attributes)
+                {
+                    $isServices = true;
+                    $isDst_attributes = false;
+                    $source = substr($source, 0, -1);
+                    $policy["DESTINATION"] = '"ANY"';
+                    $source = '"';
+                }
                if($row_data[0] == "service/protocol-attribute" && $isDst_attributes)
                 {
                     $isServices = true;
@@ -239,7 +271,7 @@
                     $isServices = false;
                 
                     $port = substr($port, 0, -1);
-                    $protocol = substr($protocol, 0, -1);
+					$protocol = substr($protocol, 0, -2);
                     $policy["PROTOCOL"] = $protocol.'"';
                     $policy["PORT"] = $port.'"';
                     $protocol = $protocol.'"';
@@ -265,26 +297,7 @@
         fwrite($fp, "\"Rule\";\"Source\";\"Destination\";\"Protocol\";\"Port\";\"Action\"\r\n");
         
         foreach ($policies as $index => $policy)
-        {
-            if(count($policy) != 6)
-                continue;
-            
-            if($policy["SOURCE"] == "" or $policy["SOURCE"] == '"' )
-                $policy["SOURCE"] = '"ANY"';
-            
-            if($policy["DESTINATION"] == "" or $policy["DESTINATION"] == '"' )
-                $policy["DESTINATION"] = '"ANY"';
-            if($policy["PROTOCOL"] == "" or $policy["PROTOCOL"] == '"' )
-                $policy["PROTOCOL"] = '"ANY"';
-            if($policy["PORT"] == "" or $policy["PORT"] == '"')
-                $policy["PORT"] = '"ANY"';
-            
-            //$tmp = array_unique(explode('"', $policy["PROTOCOL"]));
-            //foreach ($tmp as $proto)
-            //    $policy["PROTOCOL"] .= $proto."\n";
-            
-            //$policy["PROTOCOL"] = substr($policy["PROTOCOL"], 0, -1);
-            //$policy["PROTOCOL"] = $policy["PROTOCOL"].'"';
+        {   
             fwrite($fp, $policy["NAME"].";".$policy["SOURCE"].";".$policy["DESTINATION"].";".$policy["PROTOCOL"].";".$policy["PORT"].";".$policy["ACTION"]."\r\n");
         }
         fclose($fp);
