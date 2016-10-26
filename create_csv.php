@@ -138,7 +138,7 @@
                 if($key != false)
                 {
                     $isMatchedRule = true;
-                    $policy["NAME"] = $tempPolicyname; 
+                    $policy["NAME"] = '"'.$tempPolicyname.'"'; 
                 }
             }
     
@@ -186,7 +186,7 @@
                     $isDst_attributes = false;
                     $destination = substr($destination, 0, -2);
                     $policy["DESTINATION"] = $destination.'"';
-                    $destination = "";
+                    $destination = '"';
                 }
             
                 if($row_data[0] == "service/protocol-attribute")
@@ -195,7 +195,7 @@
                     $isSrc_attributes = false;
                     $source = substr($source, 0, -2);
                     $policy["SOURCE"] = $source.'"';
-                    $source = "";
+                    $source = '"';
                 }
             
                 if($row_data[0] == "action" && $isServices)
@@ -205,10 +205,10 @@
                     $port = substr($port, 0, -2);
                     $policy["PROTOCOL"] = $protocol;
                     $policy["PORT"] = $port.'"';
-                    $protocol = "";
-                    $port ="";
+                    $protocol = '"';
+                    $port ='"';
             
-                    $policy["ACTION"] = $row_data[1];
+                    $policy["ACTION"] = '"'.$row_data[1].'"';
                 }
                 
                 if($end == "action log")
