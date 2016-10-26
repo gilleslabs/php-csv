@@ -184,7 +184,7 @@
                 {
                     $isSrc_attributes = true;
                     $isDst_attributes = false;
-                    $destination = substr($destination, 0, -2);
+                    $destination = substr($destination, 0, -1);
                     $policy["DESTINATION"] = $destination.'"';
                     $destination = '"';
                 }
@@ -193,7 +193,7 @@
                 {
                     $isServices = true;
                     $isSrc_attributes = false;
-                    $source = substr($source, 0, -2);
+                    $source = substr($source, 0, -1);
                     $policy["SOURCE"] = $source.'"';
                     $source = '"';
                 }
@@ -202,7 +202,7 @@
                 {
                     $isServices = false;
                 
-                    $port = substr($port, 0, -2);
+                    $port = substr($port, 0, -1);
                     $policy["PROTOCOL"] = $protocol;
                     $policy["PORT"] = $port.'"';
                     $protocol = '"';
@@ -245,7 +245,7 @@
             foreach ($tmp as $proto)
                 $policy["PROTOCOL"] .= $proto."\n";
             
-            $policy["PROTOCOL"] = substr($policy["PROTOCOL"], 0, -2);
+            $policy["PROTOCOL"] = substr($policy["PROTOCOL"], 0, -1);
             $policy["PROTOCOL"] = $policy["PROTOCOL"].'"';
             fwrite($fp, $policy["NAME"].";".$policy["SOURCE"].";".$policy["DESTINATION"].";".$policy["PROTOCOL"].";".$policy["PORT"].";".$policy["ACTION"]."\r\n");
         }
