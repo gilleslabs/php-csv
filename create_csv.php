@@ -231,15 +231,15 @@
             if(count($policy) != 6)
                 continue;
             
-            if($policy["SOURCE"] == "")
-                $policy["SOURCE"] = '"any"';
+            if($policy["SOURCE"] == "" or $policy["SOURCE"] == '"' )
+                $policy["SOURCE"] = '"ANY"';
             
-            if($policy["DESTINATION"] == "")
-                $policy["DESTINATION"] = '"any"';
-			if($policy["PROTOCOL"] == "")
-                $policy["PROTOCOL"] = '"any"';
-			if($policy["PORT"] == "")
-                $policy["PORT"] = '"any"';
+            if($policy["DESTINATION"] == "" or $policy["DESTINATION"] == '"' )
+                $policy["DESTINATION"] = '"ANY"';
+			if($policy["PROTOCOL"] == "" or $policy["PROTOCOL"] == '"' )
+                $policy["PROTOCOL"] = '"ANY"';
+			if($policy["PORT"] == "" or $policy["PORT"] == '"')
+                $policy["PORT"] = '"ANY"';
             
             $tmp = array_unique(explode('"', $policy["PROTOCOL"]));
             foreach ($tmp as $proto)
