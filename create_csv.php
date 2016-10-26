@@ -101,7 +101,7 @@
             if( $row_data[0] == "rule" && $isPrevLineGood == true) 
                 array_push($policyOrder, $row_data[1]);
         }        
-        
+        echo (print_r($policyOrder, true)); 
 
         // On recommence la même manipulation, cette fois pour récupérer le contenu des règles
         $txt_file    = file_get_contents($filePath);
@@ -135,10 +135,13 @@
             {
                 $tempPolicyname = $row_data[1];
                 $key = array_search($tempPolicyname, $policyOrder);
+				
                 if($key != false)
                 {
                     $isMatchedRule = true;
-                    $policy["NAME"] = '"'.$tempPolicyname.'"'; 
+                    $policy["NAME"] = '"'.$tempPolicyname.'"';
+					
+
                 }
             }
     
@@ -205,6 +208,7 @@
                     $isDst_attributes = false;
                     $destination = substr($destination, 0, -1);
                     $policy["DESTINATION"] = $destination.'"';
+					$policy["SOURCE"] = '"ANY"';
                     $destination = '"';
                 }
            if($row_data[0] == "action" && $isSrc_attributes)
@@ -257,7 +261,7 @@
             }
         }
         
-        $fp  = fopen(realpath(dirname(__FILE__)).'/Output-vsg-evi.csv', 'w+');
+        $fp  = fopen(realpath(dirname(__FILE__)).'/Output-vsg-evi.csv', 'w');
         fwrite($fp, "\"Rule\";\"Source\";\"Destination\";\"Protocol\";\"Port\";\"Action\"\r\n");
         
         foreach ($policies as $index => $policy)
