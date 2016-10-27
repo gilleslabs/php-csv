@@ -216,6 +216,7 @@
                     $destination = '"';
                 }
             
+				
 			if($row_data[0] == "service/protocol-attribute" && !$isSrc_attributes)
                 {
                     $isServices = true;
@@ -249,6 +250,13 @@
 					$policy["SOURCE"] = '"ANY"';
                     $destination = '"';
                 }
+				if ($row_data[0] == "action" && !$isSrc_attributes && !$isDst_attributes && !$isServices && $row_data[1] != "log")
+				{ $policy["SOURCE"] = '"ANY"';
+				  $policy["DESTINATION"] ='"ANY"';
+				  $policy["PORT"] = '"ANY"';
+                  $policy["PROTOCOL"] = '"ANY"';
+				  $policy["ACTION"] = '"'.$row_data[1].'"';
+				  }
            if($row_data[0] == "action" && $isSrc_attributes)
                 {
                     $isServices = false;
