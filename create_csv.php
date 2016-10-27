@@ -73,7 +73,6 @@
 	
 	    // Chemin vers ton fichier
     	$vsg = 'vsg-evi.txt';
-
     	$filePath = realpath(dirname(__FILE__))."/".$vsg;
     	
         $txt_file    = file_get_contents($filePath);
@@ -88,21 +87,31 @@
         
         foreach($rows as $row => $data)
         {
+            // Supprime les caractères blancs en début et fin de ligne
             $line = trim($data);
+            // On range la ligne courante dans un tableau
             $row_data = explode(' ', $line);
-
-            if($isPrevLineGood == true && $row_data[0] != "rule")
-                $isPrevLineGood = false;
-
-            if($row_data[0] == "Policy")
-                if($row_data[1] != "default@root")
-                    $isPrevLineGood = true;      
             
-            if( $row_data[0] == "rule" && $isPrevLineGood == true) 
-                array_push($policyOrder, $row_data[1]);
-        }        
+            // Si la ligne commence par "Policy" et ne continue pas avec "default@root"
+            if($row_data[0] == "Policy" && $row_data[1] != "default@root")
+                $isPrevLineGood = true;
+            // On précise que l'on se trouve dans le bon block
+            
+            // Si on est dans le bon block et que la ligne ne commence pas par "Policy"
+            if($isPrevLineGood && $row_data[0] != "Policy")
+            {
+                // On garde la référence si la ligne commence par "rule"
+                if($row_data[0] == "rule")
+                    array_push($policyOrder, $row_data[1]);
+                // Sinon on sort du block
+                else 
+                    $isPrevLineGood = false;
+            }
+            
+        }     
+        
         echo (print_r($policyOrder, true)); 
-
+        
         // On recommence la même manipulation, cette fois pour récupérer le contenu des règles
         $txt_file    = file_get_contents($filePath);
         $rows        = explode("\n", $txt_file);
@@ -135,13 +144,10 @@
             {
                 $tempPolicyname = $row_data[1];
                 $key = array_search($tempPolicyname, $policyOrder);
-				
-                if($key != false)
+                if($key != false || $key == 0)
                 {
                     $isMatchedRule = true;
                     $policy["NAME"] = '"'.$tempPolicyname.'"';
-					
-
                 }
             }
     
@@ -296,10 +302,18 @@
         $fp  = fopen(realpath(dirname(__FILE__)).'/Output-vsg-evi.csv', 'w');
         fwrite($fp, "\"Rule\";\"Source\";\"Destination\";\"Protocol\";\"Port\";\"Action\"\r\n");
         
-        foreach ($policies as $index => $policy)
-        {   
-            fwrite($fp, $policy["NAME"].";".$policy["SOURCE"].";".$policy["DESTINATION"].";".$policy["PROTOCOL"].";".$policy["PORT"].";".$policy["ACTION"]."\r\n");
+        echo "\n";
+        
+        echo (print_r($policies[0], true));
+        if(ksort($policies))
+        {
+            //echo(print_r($policies, true));
+            foreach ($policies as $index => $policy)
+            {
+                fwrite($fp, $policy["NAME"].";".$policy["SOURCE"].";".$policy["DESTINATION"].";".$policy["PROTOCOL"].";".$policy["PORT"].";".$policy["ACTION"]."\r\n");
+            }
         }
+        
         fclose($fp);
 	exit(0);
 ?>
